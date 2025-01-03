@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using FGHomeLife.Data;
 using FGHomeLife.Services.Interfaces;
 using FGHomeLife.Services;
-using FGHomeLife.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +19,7 @@ builder.Services.AddDbContext<FGAppDbContext>(options =>
 
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IBlogStoredProcService, BlogStoredProcService>();
 
 // Cache ve Session için
 builder.Services.AddMemoryCache();
