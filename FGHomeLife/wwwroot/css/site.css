@@ -395,6 +395,8 @@ html {
 /* Blog Cards */
 .blog-card {
     transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
 }
 
     .blog-card:hover {
@@ -406,16 +408,28 @@ html {
         object-fit: cover;
     }
 
+    .blog-card .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .blog-card .card-text {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
 /* Blog Content */
 .blog-content {
     font-size: 1.1rem;
     line-height: 1.8;
+    color: #333;
 }
 
     .blog-content img {
         max-width: 100%;
         height: auto;
         margin: 1.5rem 0;
+        border-radius: 8px;
     }
 
 /* Comments */

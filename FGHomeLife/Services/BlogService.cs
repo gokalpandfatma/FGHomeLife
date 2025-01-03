@@ -3,6 +3,7 @@ using FGHomeLife.Data;
 using FGHomeLife.Models;
 using FGHomeLife.Models.ViewModels;
 using FGHomeLife.Services.Interfaces;
+using BlogPostVM = FGHomeLife.Models.ViewModels.BlogPostViewModel;
 
 namespace FGHomeLife.Services
 {
@@ -17,55 +18,72 @@ namespace FGHomeLife.Services
 
         public async Task<BlogListViewModel> GetBlogListAsync(int page = 1, int pageSize = 6, string category = null, string tag = null)
         {
-            var query = _context.BlogPosts
-                .Include(p => p.Category)
-                .Include(p => p.Tags)
-                .Include(p => p.Comments)
-                .Where(p => p.IsActive);
-
-            if (!string.IsNullOrEmpty(category))
+            try
             {
-                query = query.Where(p => p.Category.Slug == category);
-            }
+                var query = _context.BlogPosts
+                    .Include(p => p.Category)
+                    .Include(p => p.Tags)
+                    .Include(p => p.Comments)
+                    .Where(p => p.IsActive);
 
-            if (!string.IsNullOrEmpty(tag))
-            {
-                query = query.Where(p => p.Tags.Any(t => t.Slug == tag));
-            }
-
-            var totalPosts = await query.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalPosts / (double)pageSize);
-
-            var posts = await query
-                .OrderByDescending(p => p.CreatedAt)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(p => new BlogPostViewModel
+                if (!string.IsNullOrEmpty(category))
                 {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Slug = p.Slug,
-                    Summary = p.Summary,
-                    ImageUrl = p.ImageUrl,
-                    CategoryName = p.Category.Name,
-                    CategorySlug = p.Category.Slug,
-                    Tags = p.Tags.Select(t => t.Name).ToList(),
-                    CommentCount = p.Comments.Count,
-                    CreatedAt = p.CreatedAt
-                })
-                .ToListAsync();
-
-            return new BlogListViewModel
-            {
-                //Posts = posts,
-                Categories = await GetCategoriesAsync(),
-                PopularTags = await GetPopularTagsAsync(),
-                Pagination = new PaginationViewModel
-                {
-                    CurrentPage = page,
-                    TotalPages = totalPages
+                    query = query.Where(p => p.Category.Slug == category);
                 }
-            };
+
+                if (!string.IsNullOrEmpty(tag))
+                {
+                    query = query.Where(p => p.Tags.Any(t => t.Slug == tag));
+                }
+
+                var totalPosts = await query.CountAsync();
+                var totalPages = (int)Math.Ceiling(totalPosts / (double)pageSize);
+
+                var posts = await query
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(p => new BlogPostVM
+                    {
+                        Id = p.Id,
+                        Title = p.Title,
+                        Slug = p.Slug,
+                        Summary = p.Summary,
+                        ImageUrl = p.ImageUrl,
+                        CategoryName = p.Category.Name,
+                        CategorySlug = p.Category.Slug,
+                        Tags = p.Tags.Select(t => t.Name).ToList(),
+                        CommentCount = p.Comments.Count,
+                        CreatedAt = p.CreatedAt
+                    })
+                    .ToListAsync();
+
+                return new BlogListViewModel
+                {
+                    Posts = posts,
+                    Categories = await GetCategoriesAsync(),
+                    PopularTags = await GetPopularTagsAsync(),
+                    Pagination = new PaginationViewModel
+                    {
+                        CurrentPage = page,
+                        TotalPages = totalPages
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BlogListViewModel
+                {
+                    Posts = new List<BlogPostVM>(),
+                    Categories = new List<BlogCategoryViewModel>(),
+                    PopularTags = new List<BlogTagViewModel>(),
+                    Pagination = new PaginationViewModel
+                    {
+                        CurrentPage = 1,
+                        TotalPages = 1
+                    }
+                };
+            }
         }
 
         public async Task<List<BlogCategoryViewModel>> GetCategoriesAsync()
@@ -124,7 +142,7 @@ namespace FGHomeLife.Services
                 Tags = post.Tags.Select(t => t.Name).ToList(),
                 CreatedAt = post.CreatedAt,
                 Comments = await GetCommentsForPost(post.Id),
-                //RelatedPosts = await GetRelatedPosts(post.Id, post.CategoryId)
+                RelatedPosts = await GetRelatedPosts(post.Id, post.CategoryId)
             };
         }
 
@@ -156,19 +174,24 @@ namespace FGHomeLife.Services
                 .ToListAsync();
         }
 
-        private async Task<List<BlogPostViewModel>> GetRelatedPosts(int currentPostId, int categoryId)
+        private async Task<List<BlogPostVM>> GetRelatedPosts(int currentPostId, int categoryId)
         {
             return await _context.BlogPosts
                 .Where(p => p.Id != currentPostId && p.CategoryId == categoryId && p.IsActive)
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(3)
-                .Select(p => new BlogPostViewModel
+                .Select(p => new BlogPostVM
                 {
                     Id = p.Id,
                     Title = p.Title,
                     Slug = p.Slug,
                     ImageUrl = p.ImageUrl,
-                    CreatedAt = p.CreatedAt
+                    CreatedAt = p.CreatedAt,
+                    CategoryName = p.Category.Name,
+                    CategorySlug = p.Category.Slug,
+                    Tags = new List<string>(),
+                    CommentCount = p.Comments.Count,
+                    Summary = p.Summary
                 })
                 .ToListAsync();
         }

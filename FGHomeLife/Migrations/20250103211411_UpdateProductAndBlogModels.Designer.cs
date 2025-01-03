@@ -4,6 +4,7 @@ using FGHomeLife.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FGHomeLife.Migrations
 {
     [DbContext(typeof(FGAppDbContext))]
-    partial class FGAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250103211411_UpdateProductAndBlogModels")]
+    partial class UpdateProductAndBlogModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,28 +38,6 @@ namespace FGHomeLife.Migrations
                     b.HasIndex("TagsId");
 
                     b.ToTable("BlogPostTags", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            BlogPostsId = 1,
-                            TagsId = 1
-                        },
-                        new
-                        {
-                            BlogPostsId = 1,
-                            TagsId = 4
-                        },
-                        new
-                        {
-                            BlogPostsId = 2,
-                            TagsId = 5
-                        },
-                        new
-                        {
-                            BlogPostsId = 3,
-                            TagsId = 2
-                        });
                 });
 
             modelBuilder.Entity("FGHomeLife.Models.BlogCategory", b =>
@@ -99,7 +80,7 @@ namespace FGHomeLife.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(2811),
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 14, 10, 702, DateTimeKind.Local).AddTicks(9120),
                             Description = "Çiçeklerinizin bakımı hakkında ipuçları",
                             IsActive = true,
                             Name = "Çiçek Bakımı",
@@ -108,20 +89,11 @@ namespace FGHomeLife.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(2889),
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 14, 10, 702, DateTimeKind.Local).AddTicks(9200),
                             Description = "Ev dekorasyonunda çiçek kullanımı",
                             IsActive = true,
                             Name = "Dekorasyon",
                             Slug = "dekorasyon"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(2890),
-                            Description = "Özel günler için çiçek önerileri",
-                            IsActive = true,
-                            Name = "Özel Günler",
-                            Slug = "ozel-gunler"
                         });
                 });
 
@@ -138,7 +110,8 @@ namespace FGHomeLife.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -149,10 +122,10 @@ namespace FGHomeLife.Migrations
                     b.Property<int?>("ParentCommentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId1")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -163,30 +136,7 @@ namespace FGHomeLife.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId1");
-
                     b.ToTable("BlogComments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BlogPostId = 1,
-                            Content = "Harika bir yazı olmuş, teşekkürler!",
-                            CreatedAt = new DateTime(2025, 1, 3, 12, 46, 57, 642, DateTimeKind.Local).AddTicks(6006),
-                            IsApproved = true,
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            BlogPostId = 1,
-                            Content = "Yorumunuz için teşekkürler!",
-                            CreatedAt = new DateTime(2025, 1, 3, 18, 46, 57, 642, DateTimeKind.Local).AddTicks(6145),
-                            IsApproved = true,
-                            ParentCommentId = 1,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("FGHomeLife.Models.BlogPost", b =>
@@ -230,8 +180,8 @@ namespace FGHomeLife.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ViewCount")
                         .HasColumnType("int");
@@ -240,53 +190,7 @@ namespace FGHomeLife.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("BlogPosts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 1,
-                            Content = "<p>Orkideler, güzellikleri ve zarafetleriyle ev dekorasyonunun vazgeçilmez parçalarından biridir. Ancak bakımları konusunda dikkatli olunması gerekir.</p>\r\n                               <h3>1. Doğru Sulama</h3>\r\n                               <p>Orkideleri haftada bir kez, ılık suyla sulayın. Saksının altındaki deliklerden su akana kadar sulama yapın.</p>\r\n                               <h3>2. Işık İhtiyacı</h3>\r\n                               <p>Direkt güneş ışığından koruyun. Parlak ama dolaylı ışık alan bir konumda tutun.</p>",
-                            CreatedAt = new DateTime(2024, 12, 30, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(4141),
-                            ImageUrl = "/images/blog/orkide-bakim.jpg",
-                            IsActive = true,
-                            Slug = "orkide-bakiminin-puf-noktalari",
-                            Summary = "Orkidelerinizin uzun ömürlü olması için dikkat etmeniz gereken önemli bakım ipuçları.",
-                            Title = "Orkide Bakımının Püf Noktaları",
-                            UserId = 1,
-                            ViewCount = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 2,
-                            Content = "<p>Çiçekler, ev dekorasyonuna canlılık ve doğallık katan en önemli elementlerdir.</p>\r\n                               <h3>Oturma Odası</h3>\r\n                               <p>Büyük yapraklı bitkiler, oturma odasına tropik bir hava katabilir.</p>\r\n                               <h3>Yatak Odası</h3>\r\n                               <p>Lavanta gibi sakinleştirici çiçekler, yatak odasına huzur getirir.</p>",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(4309),
-                            ImageUrl = "/images/blog/ev-dekorasyon.jpg",
-                            IsActive = true,
-                            Slug = "ev-dekorasyonunda-cicek-kullanimi",
-                            Summary = "Evinizi çiçeklerle nasıl daha şık ve yaşanılır hale getirebileceğinizi öğrenin.",
-                            Title = "Ev Dekorasyonunda Çiçek Kullanımı",
-                            UserId = 1,
-                            ViewCount = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 3,
-                            Content = "<p>Sevgililer günü için çiçek seçerken dikkat edilmesi gereken noktalar vardır.</p>\r\n                               <h3>Klasik Kırmızı Güller</h3>\r\n                               <p>Kırmızı güller, tutkunun ve aşkın evrensel sembolüdür.</p>\r\n                               <h3>Alternatif Seçenekler</h3>\r\n                               <p>Orkideler zarafeti, laleler ise mükemmel aşkı temsil eder.</p>",
-                            CreatedAt = new DateTime(2025, 1, 3, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(4313),
-                            ImageUrl = "/images/blog/sevgililer-gunu.jpg",
-                            IsActive = true,
-                            Slug = "sevgililer-gunu-icin-cicek-secimi",
-                            Summary = "Sevgililer gününde partnerinizi şaşırtacak çiçek önerileri ve anlamları.",
-                            Title = "Sevgililer Günü İçin Çiçek Seçimi",
-                            UserId = 1,
-                            ViewCount = 0
-                        });
                 });
 
             modelBuilder.Entity("FGHomeLife.Models.BlogTag", b =>
@@ -313,43 +217,6 @@ namespace FGHomeLife.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BlogTags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(3148),
-                            Name = "Orkide",
-                            Slug = "orkide"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(3353),
-                            Name = "Gül",
-                            Slug = "gul"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(3354),
-                            Name = "Sukulent",
-                            Slug = "sukulent"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(3354),
-                            Name = "Bakım",
-                            Slug = "bakim"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 642, DateTimeKind.Local).AddTicks(3355),
-                            Name = "İç Mekan",
-                            Slug = "ic-mekan"
-                        });
                 });
 
             modelBuilder.Entity("FGHomeLife.Models.Category", b =>
@@ -384,6 +251,26 @@ namespace FGHomeLife.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 14, 10, 702, DateTimeKind.Local).AddTicks(5429),
+                            Description = "Aşkınızı ifade eden özel tasarımlar",
+                            IconClass = "fas fa-heart",
+                            IsActive = true,
+                            Name = "Sevgiliye Çiçekler"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 14, 10, 702, DateTimeKind.Local).AddTicks(5542),
+                            Description = "Özel günler için özel hediyeler",
+                            IconClass = "fas fa-gift",
+                            IsActive = true,
+                            Name = "Doğum Günü"
+                        });
                 });
 
             modelBuilder.Entity("FGHomeLife.Models.User", b =>
@@ -416,16 +303,6 @@ namespace FGHomeLife.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 4, 0, 46, 57, 641, DateTimeKind.Local).AddTicks(9082),
-                            Email = "admin@example.com",
-                            IsActive = true,
-                            Name = "Admin User"
-                        });
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -501,18 +378,13 @@ namespace FGHomeLife.Migrations
 
                     b.HasOne("FGHomeLife.Models.BlogComment", "ParentComment")
                         .WithMany("Replies")
-                        .HasForeignKey("ParentCommentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ParentCommentId");
 
                     b.HasOne("FGHomeLife.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("FGHomeLife.Models.User", null)
                         .WithMany("Comments")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BlogPost");
 
@@ -529,15 +401,7 @@ namespace FGHomeLife.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FGHomeLife.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Product", b =>

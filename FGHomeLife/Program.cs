@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using FGHomeLife.Data;
 using FGHomeLife.Services.Interfaces;
 using FGHomeLife.Services;
 using FGHomeLife.Data;
@@ -21,6 +20,10 @@ builder.Services.AddDbContext<FGAppDbContext>(options =>
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 
+// Cache ve Session için
+builder.Services.AddMemoryCache();
+builder.Services.AddSession();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -40,5 +43,20 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "blogDetail",
+    pattern: "blog/{slug}",
+    defaults: new { controller = "Blog", action = "Detail" });
+
+app.MapControllerRoute(
+    name: "blogCategory",
+    pattern: "blog/kategori/{category}",
+    defaults: new { controller = "Blog", action = "Index" });
+
+app.MapControllerRoute(
+    name: "blogTag",
+    pattern: "blog/etiket/{tag}",
+    defaults: new { controller = "Blog", action = "Index" });
 
 app.Run();

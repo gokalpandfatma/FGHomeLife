@@ -1,4 +1,7 @@
-﻿namespace FGHomeLife.Models.ViewModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace FGHomeLife.Models.ViewModels
 {
     public class BlogListViewModel
     {
@@ -65,5 +68,13 @@
         public int TotalPages { get; set; }
         public bool HasPrevious => CurrentPage > 1;
         public bool HasNext => CurrentPage < TotalPages;
+    }
+
+    public class HomeBlogPostViewModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Summary { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
