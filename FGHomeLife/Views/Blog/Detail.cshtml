@@ -1,0 +1,186 @@
+﻿@using FGHomeLife.Models.ViewModels
+@model BlogDetailViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Blog İçeriği -->
+        <div class="col-lg-8">
+            <article class="blog-post">
+                <img src="@Model.ImageUrl" class="img-fluid rounded mb-4" alt="@Model.Title">
+
+                <div class="mb-3">
+                    <a href="/blog/kategori/@Model.CategorySlug" class="text-primary text-decoration-none">
+                        <i class="fas fa-folder-open me-1"></i>@Model.CategoryName
+                    </a>
+                    <span class="mx-2">•</span>
+                    <span class="text-muted">
+                        <i class="far fa-calendar-alt me-1"></i>
+                        @Model.CreatedAt.ToString("dd MMMM yyyy")
+                    </span>
+                </div>
+
+
+
+                <h1 class="mb-4">@Model.Title</h1>
+
+                <div class="blog-content">
+                    @Html.Raw(Model.Content)
+                </div>
+
+                <!-- Etiketler -->
+                <div class="mt-4">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <a href="/blog/etiket/@tag.ToLower()" class="badge bg-light text-dark text-decoration-none me-2">
+                            #@tag
+                        </a>
+                    }
+                </div>
+
+                <!-- Yorumlar -->
+                <div class="mt-5">
+                    <h3>Yorumlar (@Model.Comments.Count)</h3>
+
+                    <!-- Yorum Formu -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form id="commentForm">
+                                <input type="hidden" id="postId" value="@Model.Id">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="commentContent" rows="3" placeholder="Yorumunuzu yazın..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Yorum Yap</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Yorum Listesi -->
+                    <div id="commentsList">
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <div class="comment mb-4">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">@comment.UserName</h6>
+                                        <p class="mb-1">@comment.Content</p>
+                                        <small class="text-muted">
+                                            @comment.CreatedAt.ToString("dd MMMM yyyy, HH:mm")
+                                        </small>
+                                        <button class="btn btn-sm btn-link reply-btn"
+                                                data-comment-id="@comment.Id">
+                                            Yanıtla
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Alt Yorumlar -->
+                                @if (comment.Replies?.Any() == true)
+                                {
+                                    <div class="ms-4 mt-3">
+                                        @foreach (var reply in comment.Replies)
+                                        {
+                                            <div class="comment mb-3">
+                                                <div class="d-flex">
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-1">@reply.UserName</h6>
+                                                        <p class="mb-1">@reply.Content</p>
+                                                        <small class="text-muted">
+                                                            @reply.CreatedAt.ToString("dd MMMM yyyy, HH:mm")
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- İlgili Yazılar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">İlgili Yazılar</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var relatedPost in Model.RelatedPosts)
+                    {
+                        <div class="mb-3">
+                            <a href="/blog/@relatedPost.Slug" class="text-decoration-none">
+                                <img src="@relatedPost.ImageUrl" class="img-fluid rounded mb-2" alt="@relatedPost.Title">
+                                <h6 class="mb-0 text-dark">@relatedPost.Title</h6>
+                            </a>
+                            <small class="text-muted">
+                                @relatedPost.CreatedAt.ToString("dd MMMM yyyy")
+                            </small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Yorum formu submit
+            $('#commentForm').on('submit', function(e) {
+                e.preventDefault();
+
+                $.post('/Blog/AddComment', {
+                    postId: $('#postId').val(),
+                    content: $('#commentContent').val()
+                })
+                .done(function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            });
+
+            // Yanıtla butonu click
+            $('.reply-btn').click(function() {
+                var commentId = $(this).data('comment-id');
+                var replyForm = `
+                    <div class="reply-form mt-2">
+                        <textarea class="form-control mb-2" rows="2"></textarea>
+                        <button class="btn btn-sm btn-primary submit-reply" data-comment-id="${commentId}">
+                            Yanıtla
+                        </button>
+                    </div>`;
+
+                $(this).after(replyForm);
+                $(this).remove();
+            });
+
+            // Yanıt gönderme
+            $(document).on('click', '.submit-reply', function() {
+                var parentCommentId = $(this).data('comment-id');
+                var content = $(this).prev('textarea').val();
+
+                $.post('/Blog/AddComment', {
+                    postId: $('#postId').val(),
+                    content: content,
+                    parentCommentId: parentCommentId
+                })
+                .done(function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            });
+        });
+    </script>
+} 
