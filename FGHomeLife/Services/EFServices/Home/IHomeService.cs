@@ -1,6 +1,6 @@
 ﻿using FGHomeLife.Models.ViewModels;
 
-namespace FGHomeLife.Services.Interfaces
+namespace FGHomeLife.Services.EFServices.Home
 {
     public interface IHomeService
     {

@@ -2,9 +2,8 @@
 using FGHomeLife.Data;
 using FGHomeLife.Models;
 using FGHomeLife.Models.ViewModels;
-using FGHomeLife.Services.Interfaces;
 
-namespace FGHomeLife.Services
+namespace FGHomeLife.Services.EFServices.Home
 {
     public class HomeService : IHomeService
     {

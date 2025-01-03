@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using FGHomeLife.Data;
-using FGHomeLife.Services.Interfaces;
-using FGHomeLife.Services;
+using FGHomeLife.Services.SPServices.Blog;
+using FGHomeLife.Services.EFServices.Blog;
+using FGHomeLife.Services.EFServices.Home;
 
 var builder = WebApplication.CreateBuilder(args);
 

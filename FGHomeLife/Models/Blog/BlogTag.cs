@@ -1,25 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FGHomeLife.Models
+namespace FGHomeLife.Models.Blog
 {
-    public class BlogCategory
+    public class BlogTag
     {
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
         public string Name { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
         public string Slug { get; set; }
 
-        [StringLength(500)]
-        public string Description { get; set; }
-
-        public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? UpdatedAt { get; set; }
 
         // Navigation property
         public virtual ICollection<BlogPost> BlogPosts { get; set; }

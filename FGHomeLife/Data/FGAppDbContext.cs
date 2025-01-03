@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using FGHomeLife.Models;
+using FGHomeLife.Models.Blog;
 
 namespace FGHomeLife.Data
 {

@@ -1,11 +1,10 @@
 ﻿using Dapper;
 using FGHomeLife.Models.DTOs;
 using FGHomeLife.Models.ViewModels;
-using FGHomeLife.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace FGHomeLife.Services
+namespace FGHomeLife.Services.SPServices.Blog
 {
     public class BlogStoredProcService : IBlogStoredProcService
     {
@@ -28,7 +27,7 @@ namespace FGHomeLife.Services
 
             // Blog posts
             var blogPosts = (await multi.ReadAsync<BlogListDTO>()).AsList();
-            var posts = blogPosts.Select(p => new FGHomeLife.Models.ViewModels.BlogPostViewModel
+            var posts = blogPosts.Select(p => new Models.ViewModels.BlogPostViewModel
             {
                 Id = p.Id,
                 Title = p.Title,
@@ -43,21 +42,21 @@ namespace FGHomeLife.Services
             }).AsList();
 
             // Categories
-            var categories = (await multi.ReadAsync<FGHomeLife.Models.ViewModels.BlogCategoryViewModel>()).AsList();
+            var categories = (await multi.ReadAsync<BlogCategoryViewModel>()).AsList();
 
             // Tags
-            var tags = (await multi.ReadAsync<FGHomeLife.Models.ViewModels.BlogTagViewModel>()).AsList();
+            var tags = (await multi.ReadAsync<BlogTagViewModel>()).AsList();
 
             // Total pages calculation
             var totalPosts = blogPosts.FirstOrDefault()?.TotalCount ?? 0;
             var totalPages = (int)Math.Ceiling(totalPosts / (double)pageSize);
 
-            return new FGHomeLife.Models.ViewModels.BlogListViewModel
+            return new BlogListViewModel
             {
                 Posts = posts,
                 Categories = categories,
                 PopularTags = tags,
-                Pagination = new FGHomeLife.Models.ViewModels.PaginationViewModel
+                Pagination = new PaginationViewModel
                 {
                     CurrentPage = page,
                     TotalPages = totalPages

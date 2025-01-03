@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FGHomeLife.Services.Interfaces;
 using FGHomeLife.Models.ViewModels;
+using FGHomeLife.Services.SPServices.Blog;
+using FGHomeLife.Services.EFServices.Blog;
 
 namespace FGHomeLife.Controllers
 {

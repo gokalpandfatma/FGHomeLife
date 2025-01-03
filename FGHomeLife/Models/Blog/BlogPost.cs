@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace FGHomeLife.Models
+namespace FGHomeLife.Models.Blog
 {
     public class BlogPost
     {

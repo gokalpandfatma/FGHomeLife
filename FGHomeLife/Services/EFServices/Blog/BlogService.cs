@@ -2,10 +2,10 @@
 using FGHomeLife.Data;
 using FGHomeLife.Models;
 using FGHomeLife.Models.ViewModels;
-using FGHomeLife.Services.Interfaces;
 using BlogPostVM = FGHomeLife.Models.ViewModels.BlogPostViewModel;
+using FGHomeLife.Models.Blog;
 
-namespace FGHomeLife.Services
+namespace FGHomeLife.Services.EFServices.Blog
 {
     public class BlogService : IBlogService
     {
