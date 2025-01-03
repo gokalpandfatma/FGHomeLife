@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FGHomeLife.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,6 +44,23 @@ namespace FGHomeLife.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BlogTags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    IconClass = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,6 +103,32 @@ namespace FGHomeLife.Migrations
                         name: "FK_BlogPosts_BlogCategories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "BlogCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsNew = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -155,8 +198,17 @@ namespace FGHomeLife.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "Name", "Slug", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 1, 3, 22, 41, 0, 31, DateTimeKind.Local).AddTicks(2463), "Çiçeklerinizin bakımı hakkında ipuçları", true, "Çiçek Bakımı", "cicek-bakimi", null },
-                    { 2, new DateTime(2025, 1, 3, 22, 41, 0, 31, DateTimeKind.Local).AddTicks(2620), "Ev dekorasyonunda çiçek kullanımı", true, "Dekorasyon", "dekorasyon", null }
+                    { 1, new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(8534), "Çiçeklerinizin bakımı hakkında ipuçları", true, "Çiçek Bakımı", "cicek-bakimi", null },
+                    { 2, new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(8612), "Ev dekorasyonunda çiçek kullanımı", true, "Dekorasyon", "dekorasyon", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "CreatedAt", "Description", "IconClass", "IsActive", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(4965), "Aşkınızı ifade eden özel tasarımlar", "fas fa-heart", true, "Sevgiliye Çiçekler" },
+                    { 2, new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(5076), "Özel günler için özel hediyeler", "fas fa-gift", true, "Doğum Günü" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -185,6 +237,11 @@ namespace FGHomeLife.Migrations
                 column: "TagsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -201,6 +258,9 @@ namespace FGHomeLife.Migrations
                 name: "BlogPostTags");
 
             migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
@@ -208,6 +268,9 @@ namespace FGHomeLife.Migrations
 
             migrationBuilder.DropTable(
                 name: "BlogTags");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "BlogCategories");

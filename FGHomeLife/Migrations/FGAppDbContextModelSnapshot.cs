@@ -77,7 +77,7 @@ namespace FGHomeLife.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 3, 22, 41, 0, 31, DateTimeKind.Local).AddTicks(2463),
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(8534),
                             Description = "Çiçeklerinizin bakımı hakkında ipuçları",
                             IsActive = true,
                             Name = "Çiçek Bakımı",
@@ -86,7 +86,7 @@ namespace FGHomeLife.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 3, 22, 41, 0, 31, DateTimeKind.Local).AddTicks(2620),
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(8612),
                             Description = "Ev dekorasyonunda çiçek kullanımı",
                             IsActive = true,
                             Name = "Dekorasyon",
@@ -216,6 +216,102 @@ namespace FGHomeLife.Migrations
                     b.ToTable("BlogTags");
                 });
 
+            modelBuilder.Entity("FGHomeLife.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("IconClass")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(4965),
+                            Description = "Aşkınızı ifade eden özel tasarımlar",
+                            IconClass = "fas fa-heart",
+                            IsActive = true,
+                            Name = "Sevgiliye Çiçekler"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 1, 4, 0, 4, 3, 615, DateTimeKind.Local).AddTicks(5076),
+                            Description = "Özel günler için özel hediyeler",
+                            IconClass = "fas fa-gift",
+                            IsActive = true,
+                            Name = "Doğum Günü"
+                        });
+                });
+
+            modelBuilder.Entity("FGHomeLife.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNew")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("FGHomeLife.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -299,6 +395,17 @@ namespace FGHomeLife.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("FGHomeLife.Models.Product", b =>
+                {
+                    b.HasOne("FGHomeLife.Models.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("FGHomeLife.Models.BlogCategory", b =>
                 {
                     b.Navigation("BlogPosts");
@@ -312,6 +419,11 @@ namespace FGHomeLife.Migrations
             modelBuilder.Entity("FGHomeLife.Models.BlogPost", b =>
                 {
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("FGHomeLife.Models.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("FGHomeLife.Models.User", b =>
